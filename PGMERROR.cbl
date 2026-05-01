@@ -40,29 +40,16 @@
        01 WS-SEPARADOR         PIC X(60) VALUE ALL '='.
        01 WS-SEPARADOR-MIN     PIC X(60) VALUE ALL '-'.
 
-      *---------------------------------------------------------------*
-      * FECHA Y HORA DEL ERROR                                        *
-      *---------------------------------------------------------------*
+      * FECHA Y HORA DEL ERROR *
        01 WS-FECHA.
           05 WS-FECHA-EDITADA  PIC X(10).
           05 FILLER            PIC X(01).
           05 WS-HORA-EDITADA   PIC X(08).
 
-      *---------------------------------------------------------------*
-      * DESCRIPCION DEL SQLCODE                                       *
-      *---------------------------------------------------------------*
-       01 WS-SQL-DESC          PIC X(30) VALUE SPACES.
-
-      *---------------------------------------------------------------*
-      * DESCRIPCION DEL FILE STATUS                                   *
-      *---------------------------------------------------------------*
-       01 WS-FS-DESC           PIC X(30) VALUE SPACES.
-
        77 FILLER               PIC X(26) VALUE '* FINAL  WS *'.
 
-      *---------------------------------------------------------------*
        LINKAGE SECTION.
-      *---------------------------------------------------------------*
+
            COPY CPERROR.
 
       *****************************************************************
@@ -104,55 +91,6 @@
        2000-F-PROCESO. 
            EXIT.
 
-
-
-       2100-DESCRIBIR-SQLCODE.
-
-           EVALUATE TRUE
-           WHEN ERR-SQL-OK
-                MOVE 'SIN ERROR SQL' TO WS-SQL-DESC
-           WHEN ERR-SQL-NOT-FOUND
-                MOVE 'NOT FOUND / FIN CURSOR' TO WS-SQL-DESC
-           WHEN ERR-SQL-NULL
-                MOVE 'NULL EN VARIABLE HOST' TO WS-SQL-DESC
-           WHEN ERR-SQL-NO-CURSOR
-                MOVE 'CURSOR NO ABIERTO' TO WS-SQL-DESC
-           WHEN ERR-SQL-YA-ABIERTO
-                MOVE 'CURSOR YA ESTABA ABIER' TO WS-SQL-DESC
-           WHEN ERR-SQL-SIN-PERMISO
-                MOVE 'SIN PERMISO DB2' TO WS-SQL-DESC
-           WHEN ERR-SQL-CLAVE-DUP
-                MOVE 'CLAVE DUPLICADA' TO WS-SQL-DESC
-           WHEN ERR-SQL-MULTI-ROW
-                MOVE 'SELECT INTO MULTI FILA' TO WS-SQL-DESC
-           WHEN ERR-SQL-DEADLOCK
-                MOVE 'DEADLOCK - ROLLBACK' TO WS-SQL-DESC
-           WHEN ERR-SQL-TIMEOUT
-                MOVE 'TIMEOUT - DEADLOCK' TO WS-SQL-DESC
-           WHEN OTHER
-                MOVE 'REVISAR MANUAL DB2' TO WS-SQL-DESC
-           END-EVALUATE
-           EXIT PARAGRAPH.
-
-       2200-DESCRIBIR-FILE-STATUS.
-
-           EVALUATE TRUE
-           WHEN ERR-FS-OK
-                MOVE 'SIN ERROR DE ARCHIVO' TO WS-FS-DESC
-           WHEN ERR-FS-AT-END
-                MOVE 'FIN DE ARCHIVO' TO WS-FS-DESC
-           WHEN ERR-FS-CLAVE-DUP
-                MOVE 'CLAVE DUPLICADA VSAM' TO WS-FS-DESC
-           WHEN ERR-FS-NO-FOUND
-                MOVE 'REGISTRO NO ENCONTRADO' TO WS-FS-DESC
-           WHEN ERR-FS-NO-FILE
-                MOVE 'ARCHIVO NO ENCONTRADO' TO WS-FS-DESC
-           WHEN ERR-FS-NO-PERMIT
-                MOVE 'OPERACION NO PERMITIDA' TO WS-FS-DESC
-           WHEN OTHER
-                MOVE 'REVISAR MANUAL COBOL' TO WS-FS-DESC
-           END-EVALUATE
-           EXIT PARAGRAPH.
 
       *****************************************************************
       *              MOSTRAR BLOQUE DE ERROR EN SPOOL                 *
