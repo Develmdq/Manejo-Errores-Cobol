@@ -44,14 +44,23 @@
 
        01 WS-SEPARADOR         PIC X(60)    VALUE ALL '='.
        01 WS-SEPARADOR-MIN     PIC X(60)    VALUE ALL '-'.
+       01 WS-ENCABEZADO        PIC X(60)    VALUE SPACES.
 
       * FECHA Y HORA DEL ERROR *
-       01 WS-FECHA                          VALUE SPACES.
-          05 WS-FECHA-EDITADA  PIC X(10)    VALUE SPACES.
-          05 FILLER            PIC X(01)    VALUE SPACES.
-          05 WS-HORA-EDITADA   PIC X(08)    VALUE SPACES.
+       01 WS-TIEMPO-SISTEMA.
+      *- Estructura para la Fecha
+          05 WS-FECHA-COMPLETA PIC X(08).
+          05 FILLER            REDEFINES WS-FECHA-COMPLETA.
+             10 WS-AAAA        PIC X(04).
+             10 WS-MM          PIC X(02).
+             10 WS-DD          PIC X(02).
 
-       01 WS-SQLCODE-DISPLAY   PIC -(9)9    VALUE ZEROS.   
+      *- Estructura para la Hora
+          05 WS-HORA-COMPLETA  PIC X(06).
+          05 FILLER            REDEFINES WS-HORA-COMPLETA.
+             10 WS-HH          PIC X(02).
+             10 WS-MIN         PIC X(02).
+             10 WS-SS          PIC X(02).
 
        77 FILLER               PIC X(26)    VALUE '* FINAL  WS *'.
 
@@ -67,49 +76,55 @@
            PERFORM 2000-I-PROCESO   THRU 2000-F-PROCESO
            PERFORM 3000-I-FINAL     THRU 3000-F-FINAL
            .
-       F-MAIN-PROGRAM. GOBACK. 
+       F-MAIN-PROGRAM. GOBACK.
 
       ******************************************************************
       *              CAPTURAR FECHA Y HORA DEL ERROR                   *
       ******************************************************************
        1000-I-INICIO.
-           INITIALIZE WS-FECHA
-           MOVE FUNCTION FORMATTED-CURRENT-DATE("%d-%m-%Y")
-              TO WS-FECHA-EDITADA
-           MOVE FUNCTION FORMATTED-CURRENT-DATE("%H:%M:%S")
-              TO WS-HORA-EDITADA
+           MOVE FUNCTION CURRENT-DATE(1:8)  TO WS-FECHA-COMPLETA
+           MOVE FUNCTION CURRENT-DATE(9:6)  TO WS-HORA-COMPLETA
            .
        1000-F-INICIO.  EXIT.
-           
+
        2000-I-PROCESO.
-       
-           IF WS-ERR-SQLCODE NOT = ZEROS
-              MOVE WS-ERR-SQLCODE TO WS-SQLCODE-DISPLAY
-           END-IF
+
+           MOVE SPACES TO WS-ENCABEZADO
+           STRING '>>> INFORME DE ERROR      ' DELIMITED BY SIZE
+                  WS-DD                        DELIMITED BY SIZE
+                  '/'                          DELIMITED BY SIZE
+                  WS-MM                        DELIMITED BY SIZE
+                  '/'                          DELIMITED BY SIZE
+                  WS-AAAA                      DELIMITED BY SIZE
+                  ' - '                        DELIMITED BY SIZE
+                  WS-HH                        DELIMITED BY SIZE
+                  ':'                          DELIMITED BY SIZE
+                  WS-MIN                       DELIMITED BY SIZE
+                  '     <<< '                  DELIMITED BY SIZE
+             INTO WS-ENCABEZADO
+           END-STRING
            .
        2000-F-PROCESO.  EXIT.
 
        3000-I-FINAL.
 
-           DISPLAY WS-SEPARADOR
-           DISPLAY '>>> INFORME DE ERROR <<<'
+           DISPLAY WS-ENCABEZADO
            DISPLAY WS-SEPARADOR-MIN
            DISPLAY 'PROGRAMA     : ' WS-ERR-PROGRAMA
            DISPLAY 'ENTORNO      : ' WS-ERR-ENTORNO
-           DISPLAY WS-FECHA
            DISPLAY WS-SEPARADOR-MIN
            DISPLAY 'TIPO ERROR   : ' WS-TIPO-ERROR
            DISPLAY WS-SEPARADOR-MIN
-           
-           EVALUATE TRUE 
-              WHEN WS-ERR-FILE-STATUS NOT = '00'
-                 DISPLAY 'FILE STATUS  : ' WS-ERR-FILE-STATUS
-              WHEN  WS-ERR-SQLCODE NOT = 0    
-                 DISPLAY 'SQLCODE      : ' WS-SQLCODE-DISPLAY
-              WHEN ERR-ES-CICS     
+
+           EVALUATE TRUE
+              WHEN WS-ERR-FS NOT = '00'
+                 DISPLAY 'FILE STATUS  : ' WS-ERR-FS
+              WHEN  WS-ERR-SQLCODE NOT = 0
+                 DISPLAY 'SQLCODE      : ' WS-ERR-SQLCODE
+              WHEN ERR-ES-CICS
                  DISPLAY 'RESP CICS    : ' WS-ERR-RESP-CICS
                  DISPLAY 'RESP2 CICS   : ' WS-ERR-RESP2-CICS
-           END-EVALUATE 
+           END-EVALUATE
            DISPLAY WS-SEPARADOR
            .
         3000-F-FINAL.  EXIT.
