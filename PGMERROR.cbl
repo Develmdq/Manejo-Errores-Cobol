@@ -47,7 +47,7 @@
        01 WS-ENCABEZADO        PIC X(60)    VALUE SPACES.
 
       * FECHA Y HORA DEL ERROR *
-       01 WS-TIEMPO-SISTEMA.      
+       01 WS-FECHA-HORA-ERR.
              05 WS-AAAA        PIC X(04).
              05 WS-MM          PIC X(02).
              05 WS-DD          PIC X(02).
@@ -75,7 +75,7 @@
       *              CAPTURAR FECHA Y HORA DEL ERROR                   *
       ******************************************************************
        1000-I-INICIO.
-           MOVE FUNCTION CURRENT-DATE(1:14)  TO WS-TIEMPO-SISTEMA
+           MOVE FUNCTION CURRENT-DATE(1:14)  TO WS-FECHA-HORA-ERR
            .
        1000-F-INICIO.  EXIT.
 
