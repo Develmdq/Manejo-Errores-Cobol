@@ -47,20 +47,13 @@
        01 WS-ENCABEZADO        PIC X(60)    VALUE SPACES.
 
       * FECHA Y HORA DEL ERROR *
-       01 WS-TIEMPO-SISTEMA.
-      *- Estructura para la Fecha
-          05 WS-FECHA-COMPLETA PIC X(08).
-          05 FILLER            REDEFINES WS-FECHA-COMPLETA.
-             10 WS-AAAA        PIC X(04).
-             10 WS-MM          PIC X(02).
-             10 WS-DD          PIC X(02).
-
-      *- Estructura para la Hora
-          05 WS-HORA-COMPLETA  PIC X(06).
-          05 FILLER            REDEFINES WS-HORA-COMPLETA.
-             10 WS-HH          PIC X(02).
-             10 WS-MIN         PIC X(02).
-             10 WS-SS          PIC X(02).
+       01 WS-TIEMPO-SISTEMA.      
+             05 WS-AAAA        PIC X(04).
+             05 WS-MM          PIC X(02).
+             05 WS-DD          PIC X(02).
+             05 WS-HH          PIC X(02).
+             05 WS-MIN         PIC X(02).
+             05 WS-SS          PIC X(02).
 
        77 FILLER               PIC X(26)    VALUE '* FINAL  WS *'.
 
@@ -82,8 +75,7 @@
       *              CAPTURAR FECHA Y HORA DEL ERROR                   *
       ******************************************************************
        1000-I-INICIO.
-           MOVE FUNCTION CURRENT-DATE(1:8)  TO WS-FECHA-COMPLETA
-           MOVE FUNCTION CURRENT-DATE(9:6)  TO WS-HORA-COMPLETA
+           MOVE FUNCTION CURRENT-DATE(1:14)  TO WS-TIEMPO-SISTEMA
            .
        1000-F-INICIO.  EXIT.
 
