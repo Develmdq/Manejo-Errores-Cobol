@@ -1,6 +1,6 @@
 🚧 Proyecto en desarrollo como parte de mi especialización en arquitectura COBOL".
 
-🛠️ Subprograma: RUTERRBA (RUTINA ERRORES BACTH - Gestión de Errores)
+🛠️ Subprograma: RUTERRBA (RUTINA ERRORES BATCH - Gestión de Errores)
 Esta rutina funcionará como el controlador central de errores del sistema, diseñado para transformar fallos críticos en información clara y procedimiento de cierre controlado.
 
 * Centralizará en un único bloque el nombre del programa, el punto de falla y los códigos técnicos (DSNTIAR, File Status, ON SIZE ERROR, IS NUMERIC).
