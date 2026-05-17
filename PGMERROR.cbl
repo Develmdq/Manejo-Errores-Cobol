@@ -21,7 +21,7 @@
       *      RELEVANTES DE WS-ERROR SEGUN EL CONTEXTO DEL ERROR:       *
       *      MOVE 'MIPGM001' TO WS-ERR-PROGRAMA                        *
       *      SET  ERR-ES-BATCH TO TRUE                                 *
-      *      MOVE SQLCODE     TO WS-ERR-SQLCODE                        *
+      *      MOVE SQLCA     TO WS-ERR-SQLCA                            *
       *      (u otros campos segun corresponda)                        *
       *                                                                *
       *   3. INVOCAR LA RUTINA:                                        *
@@ -54,6 +54,13 @@
              05 WS-HH          PIC X(02).
              05 WS-MIN         PIC X(02).
              05 WS-SS          PIC X(02).
+
+      * BUFFER PARA DSNTIAR *
+       01 WS-DSNTIAR-MSG.
+           05 WS-DSNTIAR-LONG  PIC S9(04)   COMP VALUE +288.
+           05 WS-DSNTIAR-TEXT  PIC X(72)    OCCURS 4 TIMES.
+
+       01 WS-ERROR-TEXT-LEN    PIC S9(9)    COMP VALUE +72.
 
        77 FILLER               PIC X(26)    VALUE '* FINAL  WS *'.
 
@@ -111,8 +118,16 @@
            EVALUATE TRUE
               WHEN WS-ERR-FS NOT = '00'
                  DISPLAY 'FILE STATUS  : ' WS-ERR-FS
-              WHEN  WS-ERR-SQLCODE NOT = 0
-                 DISPLAY 'SQLCODE      : ' WS-ERR-SQLCODE
+              WHEN WS-ERR-SQLCODE < 0
+                 IF ERR-ES-BATCH
+                    CALL 'DSNTIAR' USING WS-ERR-SQLCA
+                                         WS-DSNTIAR-MSG
+                                         WS-ERROR-TEXT-LEN
+                    DISPLAY WS-DSNTIAR-TEXT(1)
+                    DISPLAY WS-DSNTIAR-TEXT(2)
+                    DISPLAY WS-DSNTIAR-TEXT(3)
+                    DISPLAY WS-DSNTIAR-TEXT(4)
+                 END-IF
               WHEN ERR-ES-CICS
                  DISPLAY 'RESP CICS    : ' WS-ERR-RESP-CICS
                  DISPLAY 'RESP2 CICS   : ' WS-ERR-RESP2-CICS
