@@ -1,6 +1,6 @@
       ******************************************************************
        IDENTIFICATION DIVISION.
-       PROGRAM-ID. PGMERROR.
+       PROGRAM-ID. RUTERRBA.
 
       ******************************************************************
       *       SUBPROGRAMA CENTRALIZADO DE MANEJO DE ERRORES            *
@@ -10,7 +10,6 @@
       * FUNCION:                                                       *
       *   RECIBE LA ESTRUCTURA DE ERROR DEL PROGRAMA LLAMADOR,         *
       *   MUESTRA UN BLOQUE INFORMATIVO EN EL SPOOL                    *
-      *   SOPORTA ENTORNOS BATCH Y CICS.                               *
       ******************************************************************
       * USO DESDE EL PROGRAMA LLAMADOR:                                *
       *                                                                *
@@ -20,7 +19,6 @@
       *   2. ANTES DE INVOCAR LA RUTINA, CARGAR LOS CAMPOS             *
       *      RELEVANTES DE WS-ERROR SEGUN EL CONTEXTO DEL ERROR:       *
       *      MOVE 'MIPGM001' TO WS-ERR-PROGRAMA                        *
-      *      SET  ERR-ES-BATCH TO TRUE                                 *
       *      MOVE SQLCA     TO WS-ERR-SQLCA                            *
       *      (u otros campos segun corresponda)                        *
       *                                                                *
@@ -118,7 +116,6 @@
               WHEN WS-ERR-FS NOT = '00'
                  DISPLAY 'FILE STATUS  : ' WS-ERR-FS
               WHEN WS-ERR-SQLCODE < 0
-                 IF ERR-ES-BATCH
                     CALL 'DSNTIAR' USING WS-ERR-SQLCA
                                          WS-DSNTIAR-MSG
                                          WS-ERROR-TEXT-LEN
@@ -126,10 +123,6 @@
                     DISPLAY WS-DSNTIAR-TEXT(2)
                     DISPLAY WS-DSNTIAR-TEXT(3)
                     DISPLAY WS-DSNTIAR-TEXT(4)
-                 END-IF
-              WHEN ERR-ES-CICS
-                 DISPLAY 'RESP CICS    : ' WS-ERR-RESP-CICS
-                 DISPLAY 'RESP2 CICS   : ' WS-ERR-RESP2-CICS
            END-EVALUATE
            DISPLAY WS-SEPARADOR
            .
